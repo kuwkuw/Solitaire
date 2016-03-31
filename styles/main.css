@@ -1,0 +1,95 @@
+body{
+    position: relative;
+    background: #060;
+    z-index: 0;
+    position: relative;
+}
+
+.top-field:after{
+    content:"";
+    display:block;
+    clear:both;
+}
+
+.home{
+    float: left;
+}
+
+.game-field{
+    width: 960px;
+    margin: auto;
+    z-index: 1;
+}
+.cell, .deck-zone, .home-zone, .column{
+    display: inline-block;
+}
+.cell, .card{
+    height: 10em;
+    width: 7em;
+
+}
+
+.cell{
+    border: 2px solid #b20505;
+    border-radius: 8px;
+    /*overflow: visible;*/
+    float: left;
+
+}
+
+.deck-zone{
+    margin-top: 50px;
+    margin-left: 50px;
+}
+
+.deck-right{
+    /*overflow: hidden;*/
+    margin-left: 10px;
+    float: right;
+}
+
+.card.grab{
+ cursor: -webkit-grab;
+}
+
+.home-zone{
+    margin-left: 100px;
+}
+
+.game-columns{
+    margin-left: 50px;
+    margin-top: 50px;
+}
+
+.clubs, .spades {
+    color: #000;
+}
+
+.hearts, .diams {
+    color: #f00;
+}
+
+.card.upend{
+    background: url('../img/shirt.gif') center;
+}
+
+.card.upend{
+
+}
+
+.deck{
+    cursor: pointer;
+}
+
+.card{
+    background: #fff;
+    border-radius: 4px;
+}
+
+.column{
+    /*position: relative;*/
+    /*overflow: visible;*/
+}
+.column > .card{
+    /*position: absolute;*/
+}

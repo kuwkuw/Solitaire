@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solitaire</title>
+    <link rel="stylesheet" href="./styles/main.css"/>
+
+</head>
+<body>
+    <div class="game-field" data-component="game">
+        <div class="top-field">
+            <div class="deck-zone" data-component="deck">
+                <div class="cell card deck deck-left upend" data-selector="left-deck">
+                    <!--<div class="card upend"></div>-->
+                </div>
+                <div class="cell deck-right" data-selector="right-deck"></div>
+            </div>
+            <div class="home-zone">
+                <div class="cell home" data-component="home-0"></div>
+                <div class="cell home" data-component="home-1"></div>
+                <div class="cell home" data-component="home-2"></div>
+                <div class="cell home" data-component="home-3"></div>
+            </div>
+        </div>
+
+        <div class="game-columns">
+            <div class="column cell" data-component="column-0">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-1">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-2">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-3">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-4">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-5">
+                <!--<div class="cell"></div>-->
+            </div>
+            <div class="column cell" data-component="column-6">
+                <!--<div class="cell"></div>-->
+            </div>
+        </div>
+    </div>
+    <script src="./app/bundle.js"></script>
+</body>
+</html>
