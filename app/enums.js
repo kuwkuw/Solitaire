@@ -1,6 +1,5 @@
 
 exports.cardValuesEnum = {
-    a: 'A',
     k: 'K',
     q: 'Q',
     j: 'J',
@@ -12,7 +11,8 @@ exports.cardValuesEnum = {
     five: 5,
     four: 4,
     three: 3,
-    two: 2
+    two: 2,
+    a: 'A'
 };
 
 exports.suitEnum = {

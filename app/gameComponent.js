@@ -7,22 +7,22 @@ class GameComponent{
         this._el = options.element;
         this.homeComponents = [];
         this.columnComponents = [];
-        this._draggedCard;
+        //this._draggedCard;
         this._initDeckComponent()
         this._initHomeComponents();
         this._initColumnComponents()
 
 
         this._fillGameField();
-        //this._el.addEventListener('mouseup', ()=>{console.log("game up")});
-        //this._el.addEventListener('cardIsDropped', ()=>{console.log("game cardIsDropped")});
     }
 
     restart(){
-        //this.homeComponents.forEach((component)=>{component.clear()});
-        //this.columnComponents.forEach((component)=>{component.clear()});
-        //this.deckComponent.clear();
-        //this.deckComponent._shuffle();
+        console.log('restart');
+        this.homeComponents.forEach((component)=>{component.clear()});
+        this.columnComponents.forEach((component)=>{component.clear()});
+        this.deckComponent.clear();
+        this.deckComponent.shuffle();
+        this._fillGameField();
     }
 
     _fillGameField(){
@@ -46,30 +46,34 @@ class GameComponent{
         }
     }
 
+
+
     _onCardCatchFromDeck(e){
         this._hookedCard = e.detail.cardObject;
-        this._hookedCard.getElement().style.position = 'absolute';
-        this._moveCard(e.detail.mouseEvent);
+        this._hookedCard.element.style.position = 'absolute';
+        this._hookedCard.element.style.zIndex = 200;
+        this._moveCard(e.detail.mouseCoordinates);
         document.onmousemove = this._moveCard.bind(this);
         //document.addEventListener('mousemove', this._moveCard.bind(this));
     }
 
     _onCardIsDropped(e){
-        let card = e.detail.cardObject;
-        console.log(card);
-        card.getElement().hidden = true;
-        var el = document.elementFromPoint(e.detail.mouseEvent.clientX, e.detail.mouseEvent.clientY);
-        card.getElement().hidden = false;
+        let card = this._hookedCard;
 
         //find new container object
+        card.element.hidden = true;
+        var el = document.elementFromPoint(e.detail.clientX, e.detail.clientY).closest('.cell');
+        card.element.hidden = false;
         let container = this._findContainer(el);
 
         if(!!container && container.cardSuits(card)){
             container.add(card);
         }
 
-        this._hookedCard.getElement().style.position = '';
-
+        //card.element.style.position = '';
+        card.element.style.top = '';
+        card.element.style.left = '';
+        this._hookedCard.element.style.zIndex = '';
         document.onmousemove = null;
         //document.removeEventListener('mousemove', this._moveCard);
     }
@@ -89,16 +93,17 @@ class GameComponent{
     }
 
     _moveCard(e){
-        this._hookedCard.moveElement(e);
+        //e.preventDefault();
+        this._hookedCard.moveElement({pageX: e.pageX, pageY: e.pageY});
     }
 
     _initColumnComponents() {
         for(let i = 0; i < 7; i++){
             let element = this._el.querySelector('[data-component="column-'+i+'"]');
             let home = new ColumnComponent({element: element});
-            //home.onCardIsDropped(this._onCardIsDropped.bind(this));
             this.columnComponents.push(home);
-        }    }
+        }
+    }
 }
 
 module.exports =  GameComponent;

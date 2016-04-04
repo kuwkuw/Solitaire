@@ -44,9 +44,14 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
 	'use strict';
 	var GameComponent = __webpack_require__(1);
+
 	var game = new GameComponent({element: document.querySelector('[data-component="game"]')});
+
+	document.querySelector('[data-selector="restart"]').addEventListener('click', game.restart.bind(game));
+
 
 
 
@@ -63,22 +68,22 @@
 	        this._el = options.element;
 	        this.homeComponents = [];
 	        this.columnComponents = [];
-	        this._draggedCard;
+	        //this._draggedCard;
 	        this._initDeckComponent()
 	        this._initHomeComponents();
 	        this._initColumnComponents()
 
 
 	        this._fillGameField();
-	        //this._el.addEventListener('mouseup', ()=>{console.log("game up")});
-	        //this._el.addEventListener('cardIsDropped', ()=>{console.log("game cardIsDropped")});
 	    }
 
 	    restart(){
-	        //this.homeComponents.forEach((component)=>{component.clear()});
-	        //this.columnComponents.forEach((component)=>{component.clear()});
-	        //this.deckComponent.clear();
-	        //this.deckComponent._shuffle();
+	        console.log('restart');
+	        this.homeComponents.forEach((component)=>{component.clear()});
+	        this.columnComponents.forEach((component)=>{component.clear()});
+	        this.deckComponent.clear();
+	        this.deckComponent.shuffle();
+	        this._fillGameField();
 	    }
 
 	    _fillGameField(){
@@ -102,30 +107,34 @@
 	        }
 	    }
 
+
+
 	    _onCardCatchFromDeck(e){
 	        this._hookedCard = e.detail.cardObject;
-	        this._hookedCard.getElement().style.position = 'absolute';
-	        this._moveCard(e.detail.mouseEvent);
+	        this._hookedCard.element.style.position = 'absolute';
+	        this._hookedCard.element.style.zIndex = 200;
+	        this._moveCard(e.detail.mouseCoordinates);
 	        document.onmousemove = this._moveCard.bind(this);
 	        //document.addEventListener('mousemove', this._moveCard.bind(this));
 	    }
 
 	    _onCardIsDropped(e){
-	        let card = e.detail.cardObject;
-	        console.log(card);
-	        card.getElement().hidden = true;
-	        var el = document.elementFromPoint(e.detail.mouseEvent.clientX, e.detail.mouseEvent.clientY);
-	        card.getElement().hidden = false;
+	        let card = this._hookedCard;
 
 	        //find new container object
+	        card.element.hidden = true;
+	        var el = document.elementFromPoint(e.detail.clientX, e.detail.clientY).closest('.cell');
+	        card.element.hidden = false;
 	        let container = this._findContainer(el);
 
 	        if(!!container && container.cardSuits(card)){
 	            container.add(card);
 	        }
 
-	        this._hookedCard.getElement().style.position = '';
-
+	        //card.element.style.position = '';
+	        card.element.style.top = '';
+	        card.element.style.left = '';
+	        this._hookedCard.element.style.zIndex = '';
 	        document.onmousemove = null;
 	        //document.removeEventListener('mousemove', this._moveCard);
 	    }
@@ -145,16 +154,17 @@
 	    }
 
 	    _moveCard(e){
-	        this._hookedCard.moveElement(e);
+	        //e.preventDefault();
+	        this._hookedCard.moveElement({pageX: e.pageX, pageY: e.pageY});
 	    }
 
 	    _initColumnComponents() {
 	        for(let i = 0; i < 7; i++){
 	            let element = this._el.querySelector('[data-component="column-'+i+'"]');
 	            let home = new ColumnComponent({element: element});
-	            //home.onCardIsDropped(this._onCardIsDropped.bind(this));
 	            this.columnComponents.push(home);
-	        }    }
+	        }
+	    }
 	}
 
 	module.exports =  GameComponent;
@@ -178,15 +188,18 @@
 	        this._leftDeck = this._el.querySelector('[data-selector="left-deck"]');
 	        this._rightDeck = this._el.querySelector('[data-selector="right-deck"]');
 	        this._createDeck();
-	        this._shuffle();
+	        this.shuffle();
 
 	        this._leftDeck.addEventListener('click', this._deckClickHandler.bind(this));
-	        //this._rightDeck.addEventListener('mousedown', this._onCardCatch.bind(this));
 	    }
-
+	    clear(){
+	        this._shuffledDeck =[];
+	        this._tmpDeck = [];
+	        this._openCard = null;
+	        this._rightDeck.innerHTML = '';
+	    }
 	    onOpenCardCatch(handler){
 	        this._deck.forEach((card)=>{card.onCardCatch(handler)});
-	        //this._el.addEventListener('openCardCatch', hendler);
 	    }
 
 	    onCardIsDropped(handler){
@@ -211,14 +224,13 @@
 	               };
 	               let newCard = new Card(suitProp, cardValueProp);
 	               //����������� �� ������� ��������� ���������� ��� �����
-	               //TODO do implementation fo _removeCardFromDeck()
 	               newCard.onContainerIsChanged(this._removeCardFromDeck.bind(this));
 	               this._deck.push(newCard);
 	           }
 	        }
 	    }
 
-	    _shuffle(){
+	    shuffle(){
 	        while(this._shuffledDeck.length < this._deck.length){
 	            let randomIndex = this._getRandom(0, this._deck.length);
 	            let newCard = this._deck[randomIndex];
@@ -248,9 +260,9 @@
 	            this._shuffledDeck = this._tmpDeck.reverse();
 	            this._tmpDeck = [];
 	            this._leftDeck.classList.add('upend');
+	            this._leftDeck.classList.remove('empty-deck');
 	            this._rightDeck.innerHTML = '';
 	        }
-
 	    }
 
 	    _getRandom(min, max){
@@ -264,17 +276,17 @@
 
 	        this._openCard = this._shuffledDeck.pop();
 	        this._rightDeck.innerHTML = '';
-	        this._rightDeck.appendChild(this._openCard.getElement());
+	        this._rightDeck.appendChild(this._openCard.element);
 
 	        if(this._shuffledDeck.length === 0){
 	            this._leftDeck.classList.remove('upend');
+	            this._leftDeck.classList.add('empty-deck');
 	        }
 	    }
 
 	    _removeCardFromDeck(){
-	        console.log('remove card from deck')
 	        this._openCard.onContainerIsChanged(null);
-	        this._openCard = [];
+	        this._openCard = null;
 	        this._showNextCard();
 	    }
 	}
@@ -287,7 +299,6 @@
 
 	
 	exports.cardValuesEnum = {
-	    a: 'A',
 	    k: 'K',
 	    q: 'Q',
 	    j: 'J',
@@ -299,7 +310,8 @@
 	    five: 5,
 	    four: 4,
 	    three: 3,
-	    two: 2
+	    two: 2,
+	    a: 'A'
 	};
 
 	exports.suitEnum = {
@@ -322,19 +334,18 @@
 	    constructor(suit, value){
 	        this.suit = suit;
 	        this.value = value;
-
+	        this.nextCard = null;
 	        this._createCardElement();
 
 	        this._el.addEventListener('mouseup', this._initCardDroppedEvent.bind(this))
 	        this._el.addEventListener('mousedown', this._initCardCatch.bind(this));
 	    }
 
-
-	    getElement(){
+	    get element(){
 	        return this._el;
 	    }
 
-	    setElement(element){
+	    set element(element){
 	        this._el = element;
 	    }
 
@@ -345,22 +356,9 @@
 	        return false;
 	    }
 
-	    moveElement(e){
-	        //let box = this._el.getBoundingClientRect();
-	        //let boxParent = this._el.offsetParent.getBoundingClientRect();
-	        //console.log('box', box);
-	        //console.log('boxParent', boxParent);
-	        //console.log('mous', e.pageX, e.pageY);
-	        //let shiftX = e.pageX - box.left
-	        //let shifrY = e.pageY - box.top;
-	        //console.log('shifr', shiftX, shifrY);
-	        //console.log('offset', this._el.offsetParent.offsetLeft, this._el.offsetParent.offsetTop)
-	        //console.dir(this._el);
-	        //
-	        ////let left =  e.pageX - this._el.offsetWidth/2;
-	        ////let top = e.pageY - this._el.offsetHeight/2;
-	        let left =  e.pageX - (this._el.offsetWidth/2 + this._el.offsetParent.offsetLeft + 10);
-	        let top = e.pageY - (this._el.offsetHeight/2 + this._el.offsetParent.offsetTop + 10);
+	    moveElement(mouseCoordinates){
+	        let left =  mouseCoordinates.pageX - (this._el.offsetWidth/2 + this._el.offsetParent.offsetLeft + 10);
+	        let top = mouseCoordinates.pageY - (this._el.offsetHeight/2 + this._el.offsetParent.offsetTop + 10);
 	        this._el.style.left = left +'px';
 	        this._el.style.top = top + 'px';
 	    }
@@ -373,26 +371,18 @@
 	        this._el.addEventListener('cardHooked', handler);
 	    }
 
-	    containerIsChanged(e){
-	        let detail = {
-	            'cardObject': this,
-	            'mouseEvent' :e
-	        };
-
-	        let event = new CustomEvent('containerIsChanged', {detail: detail});
-	        this._el.dispatchEvent(event);
+	    containerIsChanged(){
+	        this.containerIsChangedHendler(this);
 	    }
 
 	    onContainerIsChanged(handler){
-	        this._el.addEventListener('containerIsChanged', handler);
+	        this.containerIsChangedHendler = handler;
 	    }
-
-
 
 	    _createCardElement(){
 	        var newCartElement = document.createElement('div');
 	        newCartElement.setAttribute('data-selector', 'card');
-	        newCartElement.setAttribute('class', 'card grab '+this.suit+'-'+this.value);
+	        newCartElement.setAttribute('class', 'card grab '+this.suit);
 
 	        var cardValue = this._cardValueElement(cardValuesEnum[this.value]);
 	        var cardSuit = this._cardSuitElement(suitEnum[this.suit]);
@@ -417,31 +407,33 @@
 	        return cardSuit
 	    }
 	    _initCardCatch(e){
+	        e.stopPropagation();
+	        e.preventDefault();
 	        if(!e.target.closest('[data-selector="card"]')){
 	            return
 	        }
 
 	        let detail = {
 	            'cardObject': this,
-	            'mouseEvent' :e
+	            'mouseCoordinates': this._getEventCoordinates(e)
 	        };
 
 	        let event = new CustomEvent('cardHooked', {detail: detail});
 	        this._el.dispatchEvent(event);
 	    }
 
-
-
 	    _initCardDroppedEvent(e){
-	        let detail = {
-	            'cardObject': this,
-	            'mouseEvent' :e
-	        };
-	        let event = new CustomEvent('cardIsDropped', {detail: detail});
+	        //let detail = {
+	        //    'cardObject': this,
+	        //    'mouseCoordinates': this._getEventCoordinates(e)
+	        //};
+	        let event = new CustomEvent('cardIsDropped', {detail: this._getEventCoordinates(e)});
 	        this._el.dispatchEvent(event);
 	    }
 
-
+	    _getEventCoordinates(e){
+	        return {'pageX': e.pageX, 'pageY': e.pageY, 'clientX': e.clientX, 'clientY': e.clientY }
+	    }
 	}
 
 	module.exports = CardComponent;
@@ -450,19 +442,38 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+	let cardValuesEnum = __webpack_require__(3).cardValuesEnum;
 	let BaseComponent = __webpack_require__(6);
 
 	class HomeComponent extends BaseComponent{
 	    constructor(options){
 	        super(options)
 
-
 	        //this._el.addEventListener('mouseup', this._cardIsDropped.bind(this))
 	    }
 
+	    cardSuits(card){
+	        let keys = Object.keys(cardValuesEnum).reverse();
+	        let nextCardValueKey = keys[this._deck.length];
+	        let lastCard =  this._deck[ this._deck.length];
+
+	        if(!lastCard && card.value === nextCardValueKey){
+	            return true;
+	        }
+
+	        if(card.value === nextCardValueKey && card.suit === this._deck[0].suit){
+	            return true;
+	        }
+
+	        return false;
+	    }
+
 	    add(card){
+	        card.containerIsChanged();
+	        this._deck.push(card);
 	        card.onContainerIsChanged(this._moveCard.bind(this));
-	        super.add(card);
+	        this._el.appendChild(card.element);
 	    }
 
 	    _moveCard(){
@@ -484,26 +495,14 @@
 	    }
 
 	    clear(){
-	        this._el.innerHTML = '';
 	        this._deck = [];
+	        this._el.innerHTML = '';
 	    }
 
 	    equalElement(el){
 	        return this._el === el;
 	    }
 
-	    cardSuits(card){
-	        if(this._deck.length === 0 ){
-	            return true;
-	        }
-	        return false;
-	    }
-	    //Add card to container
-	    add(card){
-	        card.containerIsChanged();
-	        this._deck.push(card);
-	        this._el.appendChild(card.getElement());
-	    }
 	}
 
 
@@ -514,31 +513,90 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+	let cardValuesEnum = __webpack_require__(3).cardValuesEnum;
 	let BaseComponent = __webpack_require__(6);
 
 	class ColumnComponent extends BaseComponent{
 	    constructor(options) {
+	        //this._openCards = [];
 	        super(options);
+	    }
+
+	    get _lastCard(){
+	        let currentCard = this._firstOpenCard;
+	        while(!!currentCard.nextCard){
+	            currentCard = currentCard.nextCard;
+	        }
+
+	        return currentCard;
+	    }
+
+	    get lastCardValue() {
+	        return this._lastCard.value;
 	    }
 
 	    fill(cards){
 	        let cardCount = cards.length
 	        for(let cardIndex = 0; cardIndex < cardCount; cardIndex++){
-	            this._deck.push(cards.pop());
-	            if(cardIndex === cardCount-1){
-	                let openCard = this._deck[this._deck.length-1].getElement();
+	            let newCard = cards.pop()
+	            newCard.onContainerIsChanged(this._removeCard.bind(this));
+	            if(cardIndex === cardCount -1){
+	                this._firstOpenCard = newCard;
 	                //openCard.style.top = 10 * cardIndex + 'px';
 	                //openCard.style.marginBottom = -150 * (cardIndex+1) + 'px';
-	                this._el.appendChild(openCard);
+	                this._el.appendChild(this._firstOpenCard.element);
+
 	            }else{
+	                this._deck.push(newCard);
 	                this._addClosedCardElement(cardIndex);
 	            }
 	        }
 	    }
 
-	    add(card){
+	    cardSuits(card){
+	        if(this._deck.length === 0 && !this._firstOpenCard){
+	            return true;
+	        }
 
-	        super.add(card);
+	        if(this._cardValueSuits(card) && this._cardColorSuits(card) ){
+	            return true;
+	        }
+
+	        return false;
+	    }
+
+	   _cardValueSuits(card){
+	       let prevCard = this._lastCard;
+	       let keys = Object.keys(cardValuesEnum);
+	       return card.value === keys[keys.indexOf(prevCard.value) + 1];
+	    }
+
+	    _cardColorSuits(card){
+	        let prevCard = this._lastCard;
+	        if(prevCard.suit === 'clubs' || prevCard.suit === 'spades'){
+	            return card.suit === 'diams' || card.suit === 'hearts';
+	        }else{
+	            return card.suit === 'clubs' || card.suit === 'spades';
+	        }
+	    }
+
+	    add(card){
+	        card.containerIsChanged();
+	        card.onContainerIsChanged(this._removeCard.bind(this));
+	        this._addCardToColumn(card);
+	    }
+
+	    _addCardToColumn(card) {
+	        if(this._firstOpenCard){
+	            this._lastCard.element.appendChild(card.element);
+	            this._lastCard.nextCard = card;
+	        }
+	        else{
+	            this._firstOpenCard = card;
+	            this._el.appendChild(this._firstOpenCard.element);
+	        }
+
 	    }
 
 	    _addClosedCardElement(cardIndex){
@@ -552,7 +610,33 @@
 	        return element;
 	    }
 
+	    _removeCard(card){
+	        if(!this._firstOpenCard){
+	            return;
+	        }
 
+	        let currentCard = this._firstOpenCard;
+	        if(currentCard.equal(card)){
+	            this._firstOpenCard = null;
+	        }
+	        while(currentCard.nextCard){
+	            if(currentCard.nextCard.equal(card)){
+	                currentCard.nextCard = null;
+	                break;
+	            }
+	            currentCard = currentCard.nextCard;
+	        }
+
+	        if(!this._firstOpenCard && this._deck.length !== 0){
+	            this._openCardFromColumnDeck();
+	        }
+	    }
+
+	    _openCardFromColumnDeck() {
+	        this._el.querySelectorAll('.card.upend')[this._deck.length-1].outerHTML = '';
+	        this._firstOpenCard = this._deck.pop();
+	        this._el.appendChild(this._firstOpenCard.element);
+	    }
 	}
 
 

@@ -5,26 +5,14 @@ class BaseComponent{
     }
 
     clear(){
-        this._el.innerHTML = '';
         this._deck = [];
+        this._el.innerHTML = '';
     }
 
     equalElement(el){
         return this._el === el;
     }
 
-    cardSuits(card){
-        if(this._deck.length === 0 ){
-            return true;
-        }
-        return false;
-    }
-    //Add card to container
-    add(card){
-        card.containerIsChanged();
-        this._deck.push(card);
-        this._el.appendChild(card.getElement());
-    }
 }
 
 

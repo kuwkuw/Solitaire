@@ -13,15 +13,18 @@ class DeckComponent{
         this._leftDeck = this._el.querySelector('[data-selector="left-deck"]');
         this._rightDeck = this._el.querySelector('[data-selector="right-deck"]');
         this._createDeck();
-        this._shuffle();
+        this.shuffle();
 
         this._leftDeck.addEventListener('click', this._deckClickHandler.bind(this));
-        //this._rightDeck.addEventListener('mousedown', this._onCardCatch.bind(this));
     }
-
+    clear(){
+        this._shuffledDeck =[];
+        this._tmpDeck = [];
+        this._openCard = null;
+        this._rightDeck.innerHTML = '';
+    }
     onOpenCardCatch(handler){
         this._deck.forEach((card)=>{card.onCardCatch(handler)});
-        //this._el.addEventListener('openCardCatch', hendler);
     }
 
     onCardIsDropped(handler){
@@ -46,14 +49,13 @@ class DeckComponent{
                };
                let newCard = new Card(suitProp, cardValueProp);
                //Подписаться на событие изминения контейнера для карты
-               //TODO do implementation fo _removeCardFromDeck()
                newCard.onContainerIsChanged(this._removeCardFromDeck.bind(this));
                this._deck.push(newCard);
            }
         }
     }
 
-    _shuffle(){
+    shuffle(){
         while(this._shuffledDeck.length < this._deck.length){
             let randomIndex = this._getRandom(0, this._deck.length);
             let newCard = this._deck[randomIndex];
@@ -83,9 +85,9 @@ class DeckComponent{
             this._shuffledDeck = this._tmpDeck.reverse();
             this._tmpDeck = [];
             this._leftDeck.classList.add('upend');
+            this._leftDeck.classList.remove('empty-deck');
             this._rightDeck.innerHTML = '';
         }
-
     }
 
     _getRandom(min, max){
@@ -99,17 +101,17 @@ class DeckComponent{
 
         this._openCard = this._shuffledDeck.pop();
         this._rightDeck.innerHTML = '';
-        this._rightDeck.appendChild(this._openCard.getElement());
+        this._rightDeck.appendChild(this._openCard.element);
 
         if(this._shuffledDeck.length === 0){
             this._leftDeck.classList.remove('upend');
+            this._leftDeck.classList.add('empty-deck');
         }
     }
 
     _removeCardFromDeck(){
-        console.log('remove card from deck')
         this._openCard.onContainerIsChanged(null);
-        this._openCard = [];
+        this._openCard = null;
         this._showNextCard();
     }
 }
