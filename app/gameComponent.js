@@ -12,8 +12,9 @@ class GameComponent{
         this._initHomeComponents();
         this._initColumnComponents()
 
-
         this._fillGameField();
+
+        this._el.addEventListener('contextmenu', (e)=>{e.preventDefault()});
     }
 
     restart(){

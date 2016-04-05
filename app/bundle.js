@@ -73,8 +73,9 @@
 	        this._initHomeComponents();
 	        this._initColumnComponents()
 
-
 	        this._fillGameField();
+
+	        this._el.addEventListener('contextmenu', (e)=>{e.preventDefault()});
 	    }
 
 	    restart(){
@@ -275,6 +276,7 @@
 	        }
 
 	        this._openCard = this._shuffledDeck.pop();
+
 	        this._rightDeck.innerHTML = '';
 	        this._rightDeck.appendChild(this._openCard.element);
 
@@ -283,11 +285,24 @@
 	            this._leftDeck.classList.add('empty-deck');
 	        }
 	    }
+	    _showPrevCard(){
+	        this._rightDeck.innerHTML = '';
+	        if(!this._openCard){
+	            this._openCard = this._tmpDeck.pop();
+	            this._rightDeck.appendChild(this._openCard.element);
+	        }
 
+
+
+	    }
 	    _removeCardFromDeck(){
 	        this._openCard.onContainerIsChanged(null);
 	        this._openCard = null;
-	        this._showNextCard();
+	        if(this._tmpDeck.length > 0){
+	            this._showPrevCard();
+	        }
+	        //this._showNextCard();
+	        console.log('Card was removed from deck. Cards in deck:' + (this._shuffledDeck.length + this._tmpDeck.length));
 	    }
 	}
 
@@ -423,6 +438,7 @@
 	    }
 
 	    _initCardDroppedEvent(e){
+	        e.preventDefault();
 	        //let detail = {
 	        //    'cardObject': this,
 	        //    'mouseCoordinates': this._getEventCoordinates(e)
@@ -456,9 +472,9 @@
 	    cardSuits(card){
 	        let keys = Object.keys(cardValuesEnum).reverse();
 	        let nextCardValueKey = keys[this._deck.length];
-	        let lastCard =  this._deck[ this._deck.length];
+	        let lastCard =  this._deck[this._deck.length];
 
-	        if(!lastCard && card.value === nextCardValueKey){
+	        if(this._deck.length === 0 && card.value === nextCardValueKey){
 	            return true;
 	        }
 

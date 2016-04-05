@@ -95,6 +95,7 @@ class CardComponent{
     }
 
     _initCardDroppedEvent(e){
+        e.preventDefault();
         //let detail = {
         //    'cardObject': this,
         //    'mouseCoordinates': this._getEventCoordinates(e)

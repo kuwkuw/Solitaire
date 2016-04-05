@@ -12,9 +12,9 @@ class HomeComponent extends BaseComponent{
     cardSuits(card){
         let keys = Object.keys(cardValuesEnum).reverse();
         let nextCardValueKey = keys[this._deck.length];
-        let lastCard =  this._deck[ this._deck.length];
+        let lastCard =  this._deck[this._deck.length];
 
-        if(!lastCard && card.value === nextCardValueKey){
+        if(this._deck.length === 0 && card.value === nextCardValueKey){
             return true;
         }
 

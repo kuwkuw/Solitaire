@@ -100,6 +100,7 @@ class DeckComponent{
         }
 
         this._openCard = this._shuffledDeck.pop();
+
         this._rightDeck.innerHTML = '';
         this._rightDeck.appendChild(this._openCard.element);
 
@@ -108,11 +109,24 @@ class DeckComponent{
             this._leftDeck.classList.add('empty-deck');
         }
     }
+    _showPrevCard(){
+        this._rightDeck.innerHTML = '';
+        if(!this._openCard){
+            this._openCard = this._tmpDeck.pop();
+            this._rightDeck.appendChild(this._openCard.element);
+        }
 
+
+
+    }
     _removeCardFromDeck(){
         this._openCard.onContainerIsChanged(null);
         this._openCard = null;
-        this._showNextCard();
+        if(this._tmpDeck.length > 0){
+            this._showPrevCard();
+        }
+        //this._showNextCard();
+        console.log('Card was removed from deck. Cards in deck:' + (this._shuffledDeck.length + this._tmpDeck.length));
     }
 }
 
