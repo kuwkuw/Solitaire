@@ -22,9 +22,9 @@ class ColumnComponent extends BaseComponent{
     }
 
     fill(cards){
-        let cardCount = cards.length
+        let cardCount = cards.length;
         for(let cardIndex = 0; cardIndex < cardCount; cardIndex++){
-            let newCard = cards.pop()
+            let newCard = cards.pop();
             newCard.onContainerIsChanged(this._removeCard.bind(this));
             if(cardIndex === cardCount -1){
                 this._firstOpenCard = newCard;
@@ -44,11 +44,9 @@ class ColumnComponent extends BaseComponent{
             return true;
         }
 
-        if(this._cardValueSuits(card) && this._cardColorSuits(card) ){
-            return true;
-        }
+        return !!(this._cardValueSuits(card) && this._cardColorSuits(card));
 
-        return false;
+
     }
 
    _cardValueSuits(card){
@@ -67,6 +65,7 @@ class ColumnComponent extends BaseComponent{
     }
 
     add(card){
+        card.element.style.position = '';
         card.containerIsChanged();
         card.onContainerIsChanged(this._removeCard.bind(this));
         this._addCardToColumn(card);
@@ -88,8 +87,8 @@ class ColumnComponent extends BaseComponent{
         this._el.appendChild(this._createClosedCardElement(cardIndex));
     }
 
-    _createClosedCardElement(cardIndex){
-        let element = document.createElement('div')
+    _createClosedCardElement(){
+        let element = document.createElement('div');
         element.setAttribute('class', 'card upend');
         element.style.marginBottom = -150 + 'px';
         return element;
