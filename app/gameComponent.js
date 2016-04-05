@@ -71,7 +71,7 @@ class GameComponent{
             container.add(card);
         }
 
-        //card.element.style.position = '';
+
         card.element.style.top = '';
         card.element.style.left = '';
         this._hookedCard.element.style.zIndex = '';

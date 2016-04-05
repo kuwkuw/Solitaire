@@ -132,7 +132,7 @@
 	            container.add(card);
 	        }
 
-	        //card.element.style.position = '';
+
 	        card.element.style.top = '';
 	        card.element.style.left = '';
 	        this._hookedCard.element.style.zIndex = '';
@@ -598,6 +598,7 @@
 	    }
 
 	    add(card){
+	        card.element.style.position = '';
 	        card.containerIsChanged();
 	        card.onContainerIsChanged(this._removeCard.bind(this));
 	        this._addCardToColumn(card);
