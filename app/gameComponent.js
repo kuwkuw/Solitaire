@@ -8,7 +8,7 @@ class GameComponent{
         this.homeComponents = [];
         this.columnComponents = [];
         //this._draggedCard;
-        this._initDeckComponent()
+        this._initDeckComponent();
         this._initHomeComponents();
         this._initColumnComponents()
 
@@ -100,7 +100,7 @@ class GameComponent{
 
     _initColumnComponents() {
         for(let i = 0; i < 7; i++){
-            let element = this._el.querySelector('[data-component="column-'+i+'"]');
+            let element = this._el.querySelector('[data-component="column-' + i + '"]');
             let home = new ColumnComponent({element: element});
             this.columnComponents.push(home);
         }

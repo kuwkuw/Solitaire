@@ -69,7 +69,7 @@
 	        this.homeComponents = [];
 	        this.columnComponents = [];
 	        //this._draggedCard;
-	        this._initDeckComponent()
+	        this._initDeckComponent();
 	        this._initHomeComponents();
 	        this._initColumnComponents()
 
@@ -161,7 +161,7 @@
 
 	    _initColumnComponents() {
 	        for(let i = 0; i < 7; i++){
-	            let element = this._el.querySelector('[data-component="column-'+i+'"]');
+	            let element = this._el.querySelector('[data-component="column-' + i + '"]');
 	            let home = new ColumnComponent({element: element});
 	            this.columnComponents.push(home);
 	        }
@@ -193,12 +193,18 @@
 
 	        this._leftDeck.addEventListener('click', this._deckClickHandler.bind(this));
 	    }
+
 	    clear(){
 	        this._shuffledDeck =[];
 	        this._tmpDeck = [];
 	        this._openCard = null;
 	        this._rightDeck.innerHTML = '';
+	        if(!this._leftDeck.classList.contains('upend')){
+	            this._leftDeck.classList.add('upend');
+	            this._leftDeck.classList.remove('empty-deck');
+	        }
 	    }
+
 	    onOpenCardCatch(handler){
 	        this._deck.forEach((card)=>{card.onCardCatch(handler)});
 	    }
@@ -277,7 +283,7 @@
 
 	        this._openCard = this._shuffledDeck.pop();
 
-	        this._rightDeck.innerHTML = '';
+	        //this._rightDeck.innerHTML = '';
 	        this._rightDeck.appendChild(this._openCard.element);
 
 	        if(this._shuffledDeck.length === 0){
@@ -285,16 +291,15 @@
 	            this._leftDeck.classList.add('empty-deck');
 	        }
 	    }
+
 	    _showPrevCard(){
-	        this._rightDeck.innerHTML = '';
+	        //this._rightDeck.innerHTML = '';
 	        if(!this._openCard){
 	            this._openCard = this._tmpDeck.pop();
 	            this._rightDeck.appendChild(this._openCard.element);
 	        }
-
-
-
 	    }
+
 	    _removeCardFromDeck(){
 	        this._openCard.onContainerIsChanged(null);
 	        this._openCard = null;
@@ -553,9 +558,9 @@
 	    }
 
 	    fill(cards){
-	        let cardCount = cards.length
+	        let cardCount = cards.length;
 	        for(let cardIndex = 0; cardIndex < cardCount; cardIndex++){
-	            let newCard = cards.pop()
+	            let newCard = cards.pop();
 	            newCard.onContainerIsChanged(this._removeCard.bind(this));
 	            if(cardIndex === cardCount -1){
 	                this._firstOpenCard = newCard;
@@ -575,11 +580,9 @@
 	            return true;
 	        }
 
-	        if(this._cardValueSuits(card) && this._cardColorSuits(card) ){
-	            return true;
-	        }
+	        return !!(this._cardValueSuits(card) && this._cardColorSuits(card));
 
-	        return false;
+
 	    }
 
 	   _cardValueSuits(card){
@@ -620,8 +623,8 @@
 	        this._el.appendChild(this._createClosedCardElement(cardIndex));
 	    }
 
-	    _createClosedCardElement(cardIndex){
-	        let element = document.createElement('div')
+	    _createClosedCardElement(){
+	        let element = document.createElement('div');
 	        element.setAttribute('class', 'card upend');
 	        element.style.marginBottom = -150 + 'px';
 	        return element;
@@ -655,7 +658,6 @@
 	        this._el.appendChild(this._firstOpenCard.element);
 	    }
 	}
-
 
 	module.exports =  ColumnComponent;
 

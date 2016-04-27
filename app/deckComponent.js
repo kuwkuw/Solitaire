@@ -17,12 +17,18 @@ class DeckComponent{
 
         this._leftDeck.addEventListener('click', this._deckClickHandler.bind(this));
     }
+
     clear(){
         this._shuffledDeck =[];
         this._tmpDeck = [];
         this._openCard = null;
         this._rightDeck.innerHTML = '';
+        if(!this._leftDeck.classList.contains('upend')){
+            this._leftDeck.classList.add('upend');
+            this._leftDeck.classList.remove('empty-deck');
+        }
     }
+
     onOpenCardCatch(handler){
         this._deck.forEach((card)=>{card.onCardCatch(handler)});
     }
@@ -101,7 +107,7 @@ class DeckComponent{
 
         this._openCard = this._shuffledDeck.pop();
 
-        this._rightDeck.innerHTML = '';
+        //this._rightDeck.innerHTML = '';
         this._rightDeck.appendChild(this._openCard.element);
 
         if(this._shuffledDeck.length === 0){
@@ -109,16 +115,15 @@ class DeckComponent{
             this._leftDeck.classList.add('empty-deck');
         }
     }
+
     _showPrevCard(){
-        this._rightDeck.innerHTML = '';
+        //this._rightDeck.innerHTML = '';
         if(!this._openCard){
             this._openCard = this._tmpDeck.pop();
             this._rightDeck.appendChild(this._openCard.element);
         }
-
-
-
     }
+
     _removeCardFromDeck(){
         this._openCard.onContainerIsChanged(null);
         this._openCard = null;

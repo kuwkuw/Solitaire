@@ -20,9 +20,11 @@ body{
     margin: auto;
     /*z-index: 1;*/
 }
+
 .cell, .deck-zone, .home-zone, .column{
     display: inline-block;
 }
+
 .cell, .card{
     height: 10em;
     width: 7em;
@@ -44,6 +46,10 @@ body{
 .deck-right{
     margin-left: 10px;
     float: right;
+}
+
+.deck-right > .card{
+    position: absolute;
 }
 
 .card.grab{
@@ -100,3 +106,5 @@ body{
 .column{
     margin-right: 10px;
 }
+
+

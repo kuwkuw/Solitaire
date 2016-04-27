@@ -123,5 +123,4 @@ class ColumnComponent extends BaseComponent{
     }
 }
 
-
 module.exports =  ColumnComponent;
